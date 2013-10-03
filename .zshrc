@@ -13,7 +13,7 @@ null-line () {
     echo -E - $'\0'
 }
 compprefuncs=( null-line )
-comppostfuncs=( null-line )
+comppostfuncs=( null-line exit )
 
 # we use zparseopts
 zmodload zsh/zutil
