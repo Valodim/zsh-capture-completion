@@ -9,7 +9,8 @@ zpty -rt z
 zpty -w z "$1"$'\t'
 
 integer tog=0
-while zpty -r z; do :; done | while read -r line; do
+# read from the pty, and parse linewise
+while zpty -r z; do :; done | while IFS= read -r line; do
     if [[ $line == *$'\0\r' ]]; then
         (( tog++ )) && return 0 || continue
     fi

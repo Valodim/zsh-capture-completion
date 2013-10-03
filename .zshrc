@@ -15,17 +15,13 @@ null-line () {
 compprefuncs=( null-line )
 comppostfuncs=( null-line exit )
 
-# we use zparseopts
-zmodload zsh/zutil
-
 # override compadd (this our hook)
 compadd () {
 
     typeset -a tmp; 
 
     # check if any of -O, -A or -D are given
-    zparseopts -E -a tmp O A D
-    if (( $#tmp )); then
+    if [[ ${@[1,(i)(-|--)]} == *-(O|A|D)\ * ]]; then
         # if that is the case, just delegate and leave
         builtin compadd "$@"
         return $?
@@ -40,7 +36,7 @@ compadd () {
 
     return
 
-    # TODO capture descriptions (sorta complicated to get right :\)
+    # TODO capture descriptions (sorta complicated to get right :\ )
     if (( $@[(I)-d] )); then # kind of a hack, $+@[(r)-d] doesn't work because of line noise overload
         tmp=${@[(i)-d]}
         echo -E 'descriptions: ' ${(e):-\$$@[tmp+1]}
