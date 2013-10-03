@@ -8,6 +8,13 @@ string plus a tab character is sent so the expand-word widget is executed. To
 capture the hits, the compadd function is overridden, injecting a parameter
 and just outputting the matching words to stdout.
 
+Note this requires (at the time of this writing) a nightly version of zsh which
+includes the patch from here:
+
+http://www.zsh.org/mla/workers/2013/msg00728.html
+https://github.com/zsh-users/zsh/commit/b0a0441902f848da4284e107c29e43e222252959
+
+
 Usage:
 
     capture.zsh bufferstring
