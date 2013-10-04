@@ -15,6 +15,9 @@ null-line () {
 compprefuncs=( null-line )
 comppostfuncs=( null-line exit )
 
+# we use zparseopts
+zmodload zsh/zutil
+
 # override compadd (this our hook)
 compadd () {
 
@@ -30,9 +33,14 @@ compadd () {
     # ok, this concerns us!
     # echo -E - got this: "$@"
 
+    # extract suffix from compadd call. we can't do zsh's cool -r remove-func
+    # magic, but it's better than nothing.
+    typeset -A suffix
+    zparseopts -E -a suffix S:
+
     # capture completions by injecting -A parameter into the compadd call
     builtin compadd -A tmp "$@"
-    (( $#tmp )) && print -l -- $tmp
+    (( $#tmp )) && print -l -- $IPREFIX$PREFIX$^tmp$suffix
 
     return
 
