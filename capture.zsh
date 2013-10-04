@@ -2,7 +2,8 @@
 
 zmodload zsh/zpty
 
-zpty z ZDOTDIR=. zsh -i
+here=( ${0:a:h} )
+zpty z ZDOTDIR=$here zsh -i
 
 # wait for ok from shell
 zpty -rt z
