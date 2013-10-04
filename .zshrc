@@ -7,6 +7,8 @@ compinit
 
 # never run a command
 bindkey '^M' undefined
+bindkey '^J' undefined
+bindkey '^I' complete-word
 
 # send a line with null-byte at the end before and after completions are output
 null-line () {
