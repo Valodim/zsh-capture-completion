@@ -35,12 +35,17 @@ compadd () {
 
     # extract suffix from compadd call. we can't do zsh's cool -r remove-func
     # magic, but it's better than nothing.
-    typeset -A suffix
-    zparseopts -E -a suffix S:
+    typeset -A apre hpre hsuf asuf
+    zparseopts -E P:=apre p:=hpre S:=asuf s:=hsuf
 
     # capture completions by injecting -A parameter into the compadd call
     builtin compadd -A tmp "$@"
-    (( $#tmp )) && print -l -- $IPREFIX$PREFIX$^tmp$suffix
+
+    # JESUS CHRIST IT TOOK ME FOREVER TO FIGURE OUT THIS OPTION WAS SET AND MESSED WITH MY SHIT HERE
+    setopt localoptions norcexpandparam
+
+    # print all expansions
+    (( $#tmp )) && print -l -- $IPREFIX$PREFIX$apre$hpre${^tmp}$hsuf$asuf
 
     return
 
