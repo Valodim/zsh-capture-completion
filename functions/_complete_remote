@@ -1,0 +1,34 @@
+#autoload
+
+local expl ret=1
+
+# this is a WIP thing. there is a lot of room for improvement, for example by
+# using \0 as separator character, giving proper indication of descriptions,
+# and passing through PREFIX, -r and -f.
+
+if zstyle -T ":completion:${curcontext}:files" remote-access; then
+
+    _tags remote_completion
+    while _tags; do
+        if _requested remote_completion expl "Remote Completion on $host for '$words'"; then
+            typeset -a _tmp _tmpv 
+            _tmp=( ${${(f)"$(ssh $host -o BatchMode=yes -a -x .zsh/subs/zsh-capture-completion/capture.zsh \'"$words"\' 2>/dev/null)"}%$'\r'} )
+
+            # anything?
+            (( $#_tmp )) || return $ret
+
+            # descriptions available? (heuristic!)
+            if [[ $_tmp[1] == *\ --\ * ]]; then
+                # strip values from description and display
+                _tmpv=( ${_tmp%% --*} )
+                compadd "$expl[@]" -d _tmp -a _tmpv && ret=0
+            else
+                compadd -a _tmp && ret=0
+            fi
+        fi
+       (( ret )) || break
+    done
+
+    return $ret
+
+fi
