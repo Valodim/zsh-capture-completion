@@ -7,7 +7,7 @@ zpty z ZDOTDIR=$here zsh -i
 
 # wait for ok from shell
 zpty -rt z
-zpty -w z "$1"$'\t'
+zpty -w z "$*"$'\t'
 
 integer tog=0
 # read from the pty, and parse linewise
