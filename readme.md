@@ -5,12 +5,6 @@ the zshcompsys completion system. Because of the very complicated nature of
 zsh's completions, this can (to my knowledge) not be done in a straightforward
 way, and this script is accordingly hacky.
 
-Note this script requires (at the time of this writing) a nightly version of
-zsh which includes the patch from here:
-
-http://www.zsh.org/mla/workers/2013/msg00728.html
-https://github.com/zsh-users/zsh/commit/b0a0441902f848da4284e107c29e43e222252959
-
 
 ## Method
 
@@ -19,6 +13,7 @@ string plus a tab character is sent so the complete-word widget is executed. To
 capture the hits, the compadd function is selectivly overridden in a local
 .zshrc file, capturing matches by injecting a parameter and outputting matches
 to stdout.
+
 
 ## Usage
 
