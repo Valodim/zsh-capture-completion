@@ -2,11 +2,12 @@
 
 zmodload zsh/zpty
 
-here=( ${0:a:h} )
-zpty z ZDOTDIR=$here zsh -i
+inc=( ${0:a:h}/capture-include.zsh )
+zpty z zsh -f -i
 
 # wait for ok from shell
 zpty -rt z
+zpty -w z "source $inc"
 zpty -w z "$*"$'\t'
 
 integer tog=0
