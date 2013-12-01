@@ -11,13 +11,12 @@ local line
 setopt rcquotes
 () {
     zpty -w z source $1
-    # line echo from what we just put
-    zpty -r z line
-    # prompt drawn
-    zpty -r z line
-    # should be "ok"
-    zpty -r z line
-    [[ $line == ok* ]] || { echo 'error initializing.' >&2; exit 2 }
+    repeat 4; do
+        zpty -r z line
+        [[ $line == ok* ]] && return
+    done
+    echo 'error initializing.' >&2
+    exit 2
 } =( <<< '
 # no prompt!
 PROMPT=
