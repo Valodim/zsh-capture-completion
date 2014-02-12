@@ -10,9 +10,9 @@ way, and this script is accordingly hacky.
 
 Roughly, a pseudo-interactive zsh session is spawned using zpty, and a buffer
 string plus a tab character is sent so the complete-word widget is executed. To
-capture the hits, the compadd function is selectivly overridden in a local
-.zshrc file, capturing matches by injecting a parameter and outputting matches
-to stdout.
+capture the hits, the compadd function is selectivly overridden in an
+inline-sourced file, capturing matches by injecting a parameter to the original
+compadd call and outputting matches to stdout.
 
 
 ## Usage
