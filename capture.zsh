@@ -29,13 +29,19 @@ compinit -d ~/.zcompdump_capture
 bindkey ''^M'' undefined
 bindkey ''^J'' undefined
 bindkey ''^I'' complete-word
+bindkey ''^U'' kill-whole-line
 
 # send a line with null-byte at the end before and after completions are output
 null-line () {
     echo -E - $''\0''
 }
+comppost () {
+  null-line
+  compprefuncs=( null-line )
+  comppostfuncs=( comppost )
+}
 compprefuncs=( null-line )
-comppostfuncs=( null-line exit )
+comppostfuncs=( comppost )
 
 # never group stuff!
 zstyle '':completion:*'' list-grouped false
@@ -49,7 +55,6 @@ zmodload zsh/zutil
 
 # override compadd (this our hook)
 compadd () {
-
     # check if any of -O, -A or -D are given
     if [[ ${@[1,(i)(-|--)]} == *-(O|A|D)\ * ]]; then
         # if that is the case, just delegate and leave
@@ -107,31 +112,36 @@ compadd () {
     # display all matches
     local dsuf dscr
     for i in {1..$#__hits}; do
-
         # add a dir suffix?
         (( dirsuf )) && [[ -d $__hits[$i] ]] && dsuf=/ || dsuf=
         # description to be displayed afterwards
-        (( $#__dscr >= $i )) && dscr=" -- ${${__dscr[$i]}##$__hits[$i] #}" || dscr=
+        # (( $#__dscr >= $i )) && dscr=" -- ${${__dscr[$i]}##$__hits[$i] #}" || dscr=
 
         echo -E - $IPREFIX$apre$hpre$__hits[$i]$dsuf$hsuf$asuf$dscr
-
     done
-
 }
 
 # signal success!
 echo ok')
 
-zpty -w z "$*"$'\t'
+local input
+while true; do
+  IFS= read -u 0 -r input
+  if [[ -z "$input" ]]; then
+    exit
+  fi
+  zpty -w -n z $'\25'"$input"$'\t'
 
-integer tog=0
-# read from the pty, and parse linewise
-while zpty -r z; do :; done | while IFS= read -r line; do
-    if [[ $line == *$'\0\r' ]]; then
-        (( tog++ )) && return 0 || continue
-    fi
-    # display between toggles
-    (( tog )) && echo -E - $line
+  integer tog=0
+  # read from the pty, and parse linewise
+  while zpty -r z line; do
+      if [[ $line == *$'\0\r\n' ]]; then
+          (( tog++ )) && break || continue
+      fi
+      # display between toggles
+      (( tog )) && echo -E - ${line%$'\r\n'}
+  done | sort -u
+  print $'\0'
 done
 
 return 2
